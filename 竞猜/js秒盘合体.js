@@ -266,7 +266,8 @@
     var killLeftInterval0, killLeftInterval1, killLeftInterval2,killRightInterval0,killRightInterval1,killRightInterval2;
     function eatAllLeftBall(code) {
         let stopBetCheck = document.getElementsByClassName("GuessGameBox")[code].innerText.indexOf("已封盘");
-        if(checkInputValidate(code) && stopBetCheck==-1){
+        let checkValidate = checkInputValidate(code);
+        if(checkValidate && stopBetCheck==-1){
             if(code===0){
                 killLeftBtn0 = !killLeftBtn0;
                 document.getElementById("eat_left_"+code).innerText = killLeftBtn0 ? "正在秒盘" : "等待秒盘";
@@ -292,7 +293,7 @@
                     clearInterval(killLeftInterval2);
                 }         
             }
-        }else if(checkInputValidate(code) && stopBetCheck>-1){
+        }else if(checkValidate && stopBetCheck>-1){
             alert("已经封盘，无法押注");
         }
 
@@ -335,7 +336,8 @@
     // bet all fish ball on right side
     function eatAllRightBall(code) {
         let stopBetCheck = document.getElementsByClassName("GuessGameBox")[code].innerText.indexOf("已封盘");
-        if(checkInputValidate(code) && stopBetCheck==-1){
+        let checkValidate = checkInputValidate(code);
+        if(checkValidate && stopBetCheck==-1){
             if(code===0){
                 killRightBtn0 = !killRightBtn0;
                 document.getElementById("eat_right_"+code).innerText = killRightBtn0 ? "正在秒盘" : "等待秒盘";
@@ -361,7 +363,7 @@
                     clearInterval(killRightInterval2);
                 }          
             }            
-        }else if(checkInputValidate(code) && stopBetCheck>-1){
+        }else if(checkValidate && stopBetCheck>-1){
             alert("已经封盘，无法押注");
         }
 
