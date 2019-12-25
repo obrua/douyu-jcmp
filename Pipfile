@@ -1,11 +1,15 @@
 [[source]]
 name = "pypi"
-url = "https://pypi.org/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
 verify_ssl = true
 
 [dev-packages]
+autopep8 = "*"
+pyinstaller = "*"
+cython = "*"
 
 [packages]
+requests = "*"
 
 [requires]
 python_version = "3.7"
