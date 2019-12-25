@@ -239,24 +239,16 @@
         // let payRadioEnd = elementNode[1].value.trim();
         let payFishBall = elementNode[2].value.trim();
         if ((isNumber(payRadioStart) || isFloat(payRadioStart)) && payRadioStart!="") {
-            validateFlag = true;
         }else{
             validateFlag = false;
             alert("起始赔率设置错误，请重新输入");
+            return validateFlag;
         }
-        // if ((!isNumber(payRadioEnd) && !isFloat(payRadioEnd)) ) {
-        //     validateFlag = false;
-        //     alert("结束赔率设置错误，请重新输入");
-        // }
         if (isNumber(payFishBall) && payFishBall!="" ) {
-            validateFlag = true;
         }else{
             validateFlag = false;
             alert("鱼丸数量设置错误，请重新输入");
         }
-        // minRadio = Math.min(payRadioStart,payRadioEnd);
-        // maxRadio = Math.max(payRadioStart,payRadioEnd);
-        // betFishBall = payFishBall;
         return validateFlag;
     }
     // clear input text content
@@ -273,7 +265,8 @@
     var killLeftBtn0=false,killLeftBtn1=false,killLeftBtn2=false,killRightBtn0=false,killRightBtn1=false,killRightBtn2=false;
     var killLeftInterval0, killLeftInterval1, killLeftInterval2,killRightInterval0,killRightInterval1,killRightInterval2;
     function eatAllLeftBall(code) {
-        if(checkInputValidate(code)){
+        let stopBetCheck = document.getElementsByClassName("GuessGameBox")[code].innerText.indexOf("已封盘");
+        if(checkInputValidate(code) && stopBetCheck==-1){
             if(code===0){
                 killLeftBtn0 = !killLeftBtn0;
                 document.getElementById("eat_left_"+code).innerText = killLeftBtn0 ? "正在秒盘" : "等待秒盘";
@@ -299,6 +292,8 @@
                     clearInterval(killLeftInterval2);
                 }         
             }
+        }else if(checkInputValidate(code) && stopBetCheck>-1){
+            alert("已经封盘，无法押注");
         }
 
         function readyToKillLeft(){
@@ -339,7 +334,8 @@
     }
     // bet all fish ball on right side
     function eatAllRightBall(code) {
-        if(checkInputValidate(code)){
+        let stopBetCheck = document.getElementsByClassName("GuessGameBox")[code].innerText.indexOf("已封盘");
+        if(checkInputValidate(code) && stopBetCheck==-1){
             if(code===0){
                 killRightBtn0 = !killRightBtn0;
                 document.getElementById("eat_right_"+code).innerText = killRightBtn0 ? "正在秒盘" : "等待秒盘";
@@ -365,6 +361,8 @@
                     clearInterval(killRightInterval2);
                 }          
             }            
+        }else if(checkInputValidate(code) && stopBetCheck>-1){
+            alert("已经封盘，无法押注");
         }
 
         function readyToKillRight(){
@@ -467,9 +465,9 @@
         let isLoad = document.getElementById("quiz_window_0");
         let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
         if(isLoad==undefined&&checkLoad!=undefined){
-            setTimeout(getGuessGameBox,500);
+            setTimeout(getGuessGameBox,300);
         }else if(isLoad==undefined && checkLoad == undefined){
-            setTimeout(topicRoomLoadGuessUI,200);
+            setTimeout(topicRoomLoadGuessUI,300);
         }
     }
 
@@ -479,12 +477,13 @@
         let isLoad = document.getElementById("quiz_window_0");
         if(topicRoom!=undefined && isLoad==undefined){
             topicRoom.addEventListener("mouseup",topicRoomLoadGuessUI);//专题直播间绑定按钮
+        }else if(topicRoom == undefined){
+            let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
+            if(checkLoad!=undefined && isLoad==undefined){
+                getGuessGameBox();
+            }else{
+                setTimeout(checkUILoad,10000);
+            }              
         }
-        let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
-        if(checkLoad!=undefined && isLoad==undefined){
-            getGuessGameBox();
-        }else{
-            setTimeout(checkUILoad,15000);
-        }            
     }
     checkUILoad();
