@@ -404,7 +404,7 @@ function startToKillBet(code,isLeft) {
     console.info(bankList);
     loopEatPondMoney(code, bankList, isLeft);
 }
-//循环加注一次秒盘 ，轮询定时任务300ms
+//循环加注一次秒盘
 function loopEatPondMoney(code, bankList, isLeft) {
     // if (bankList.length == 0) {
     //     console.log("秒盘循环检测中……");
@@ -421,7 +421,8 @@ function loopEatPondMoney(code, bankList, isLeft) {
             if(num === bankList.length){
                 if(fishBall0<=0){
                     console.info("设置鱼丸已压光,秒盘结束！");
-                    clearSetupTimeout(code);                    
+                    clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);                    
                 }else{
                     if(isLeft){
                         killLeftTM0 = setTimeout(function(){startToKillBet(code,true)},loomTimeGap);
@@ -437,13 +438,15 @@ function loopEatPondMoney(code, bankList, isLeft) {
                 } else {
                     console.info("设置鱼丸已压光,秒盘结束！");
                     clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);  
                 }                    
             }
         }else if(code===1){
             if(num === bankList.length){
                 if(fishBall1<=0){
                     console.info("设置鱼丸已压光,秒盘结束！");
-                    clearSetupTimeout(code);                    
+                    clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);                      
                 }else{
                     if(isLeft){
                         killLeftTM1 = setTimeout(function(){startToKillBet(code,true)},loomTimeGap);
@@ -459,13 +462,15 @@ function loopEatPondMoney(code, bankList, isLeft) {
                 } else {
                     console.info("设置鱼丸已压光,秒盘结束！");
                     clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);  
                 }                    
             }
         }else if(code===2){
             if(num === bankList.length){
                 if(fishBall2<=0){
                     console.info("设置鱼丸已压光,秒盘结束！");
-                    clearSetupTimeout(code);                    
+                    clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);                      
                 }else{
                     if(isLeft){
                         killLeftTM2 = setTimeout(function(){startToKillBet(code,true)},loomTimeGap);
@@ -481,6 +486,7 @@ function loopEatPondMoney(code, bankList, isLeft) {
                 } else {
                     console.info("设置鱼丸已压光,秒盘结束！");
                     clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);  
                 }                    
             }
         }
@@ -514,6 +520,7 @@ function loopEatPondMoney(code, bankList, isLeft) {
             loopBetRecycle();
         }).catch(err => {
             console.error('REQUEST ERROR', err);
+            loopBetRecycle();
         })
     }
 }
