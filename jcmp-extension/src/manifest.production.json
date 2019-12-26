@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.douyu.com/*"
+        "*://www.douyu.com/*"
       ],
       "exclude_matches": [
         "*://yuba.douyu.com/*"

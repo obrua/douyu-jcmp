@@ -63,6 +63,7 @@ function doMessage(data) {
   });
 };
 
+
 (function () {
   'use strict';
   window.onload = function () {
@@ -74,14 +75,18 @@ function doMessage(data) {
     //     console.debug("injectjcmpTimer over!");
     //     return;
     //   };
-      
+
     //   injectjcmpIndex++;
     // }, 2000);
-    console.log("injectjcmpTimer start!")
-    self.setTimeout(function () {
+    var locationurl = window.location.href;
+    if (locationurl.indexOf('www.douyu.com') >= 0) {
+      console.log("injectjcmpTimer start!")
+      self.setTimeout(function () {
         injectScript(chrome.extension.getURL('js/quote/jcmp.js'), 'head');
         console.log("injectjcmpTimer over!");
-    }, 20000);
+      }, 20000);
+    }
+
   };
 })();
 
