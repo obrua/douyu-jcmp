@@ -428,7 +428,6 @@
         function loopBetRecycle() {
             if (num == bankList.length) {
                 console.log("秒盘完成");
-                clearSetupInterval(code);
             } else {
                 if (fishBall > 0) {
                     console.log("秒盘已执行,剩余鱼丸：" + fishBall);
@@ -480,7 +479,6 @@
         if(topicRoom!=undefined && isLoad==undefined){
             topicRoom.addEventListener("mouseup",topicRoomLoadGuessUI);//专题直播间绑定按钮
         }
-
 
         let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
         if(checkLoad!=undefined && isLoad==undefined){
