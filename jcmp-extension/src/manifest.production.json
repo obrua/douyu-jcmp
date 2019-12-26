@@ -1,0 +1,52 @@
+{
+  "manifest_version": 2,
+  "name": "斗鱼竞猜助手",
+  "short_name": "斗鱼竞猜助手",
+  "description": "斗鱼竞猜助手 by Obrua.com！",
+  "version": "1.0.0",
+  "icons": {
+    "16": "assets/img/icon.png",
+    "19": "assets/img/icon.png",
+    "38": "assets/img/icon.png",
+    "48": "assets/img/icon.png",
+    "128": "assets/img/icon.png"
+  },
+  "browser_action": {
+    "default_icon": "assets/img/icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ]
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.douyu.com/*"
+      ],
+      "css": [
+        "css/content.css","css/global.css"
+      ],
+      "js": [
+        "js/content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "tabs",
+    "*://*.obrua.com/*",
+    "*://*.douyu.com/*",
+    "*://*.douyucdn.cn/*"
+  ],
+  "web_accessible_resources": [
+    "fonts/*",
+    "js/*"
+  ]
+}
