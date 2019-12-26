@@ -294,7 +294,7 @@
                 }         
             }
         }else if(checkValidate && stopBetCheck>-1){
-            alert("已经封盘，无法押注");
+            alert("已经封盘，无法秒盘");
         }
 
         function readyToKillLeft(){
@@ -364,7 +364,7 @@
                 }          
             }            
         }else if(checkValidate && stopBetCheck>-1){
-            alert("已经封盘，无法押注");
+            alert("已经封盘，无法秒盘");
         }
 
         function readyToKillRight(){
@@ -481,7 +481,7 @@
             topicRoom.addEventListener("mouseup",topicRoomLoadGuessUI);//专题直播间绑定按钮
         }
 
-        
+
         let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
         if(checkLoad!=undefined && isLoad==undefined){
             getGuessGameBox();
