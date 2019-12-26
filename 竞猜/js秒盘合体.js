@@ -479,13 +479,14 @@
         let isLoad = document.getElementById("quiz_window_0");
         if(topicRoom!=undefined && isLoad==undefined){
             topicRoom.addEventListener("mouseup",topicRoomLoadGuessUI);//专题直播间绑定按钮
-        }else if(topicRoom == undefined){
-            let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
-            if(checkLoad!=undefined && isLoad==undefined){
-                getGuessGameBox();
-            }else{
-                setTimeout(checkUILoad,10000);
-            }              
         }
+
+        
+        let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
+        if(checkLoad!=undefined && isLoad==undefined){
+            getGuessGameBox();
+        }else{
+            setTimeout(checkUILoad,10000);
+        }              
     }
     checkUILoad();
