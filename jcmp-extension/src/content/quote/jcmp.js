@@ -452,7 +452,7 @@ function loopEatPondMoney(code, bankList, payFishBall) {
             if (fishBall > 0) {
                 console.log("秒盘已执行,剩余鱼丸：" + fishBall);
                 betQuizRequest(fishBall, bankList[num].quizId, bankList[num].bankId);
-                fishBall = fishBall - bankList[num].pondMoney;
+                // fishBall = fishBall - bankList[num].pondMoney;
                 num++;
             } else {
                 console.info("设置鱼丸已压光");
@@ -474,6 +474,9 @@ function loopEatPondMoney(code, bankList, payFishBall) {
             return result.json();
         }).then(json => {
             console.info(json);
+            if (json.error == 0) {
+                fishBall = fishBall - json.data.real_bet_amount;
+            }
             loopBetRecycle();
         }).
             catch(err => {
