@@ -447,7 +447,11 @@ function loopEatPondMoney(code, bankList, payFishBall) {
 
     function loopBetRecycle() {
         if (num == bankList.length) {
-            console.log("秒盘完成");
+            // console.log("秒盘完成");
+            if(fishBall<=0){
+                console.info("设置鱼丸已压光,秒盘结束！");
+                clearSetupInterval(code);                
+            }
         } else {
             if (fishBall > 0) {
                 console.log("秒盘已执行,剩余鱼丸：" + fishBall);
@@ -455,7 +459,7 @@ function loopEatPondMoney(code, bankList, payFishBall) {
                 // fishBall = fishBall - bankList[num].pondMoney;
                 num++;
             } else {
-                console.info("设置鱼丸已压光");
+                console.info("设置鱼丸已压光,秒盘结束！");
                 clearSetupInterval(code);
             }
         }
@@ -476,12 +480,12 @@ function loopEatPondMoney(code, bankList, payFishBall) {
             console.info(json);
             if (json.error == 0) {
                 fishBall = fishBall - json.data.real_bet_amount;
+                console.info("秒盘剩余鱼丸数："+fishBall);
             }
             loopBetRecycle();
-        }).
-            catch(err => {
+        }).catch(err => {
                 console.error('REQUEST ERROR', err);
-            })
+        })
     }
 }
 //加载专题直播间竞猜的弹窗
