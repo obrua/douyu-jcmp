@@ -81,7 +81,7 @@ function doMessage(data) {
     self.setTimeout(function () {
         injectScript(chrome.extension.getURL('js/quote/jcmp.js'), 'head');
         console.log("injectjcmpTimer over!");
-    }, 10000);
+    }, 20000);
   };
 })();
 

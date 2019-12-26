@@ -27,6 +27,9 @@
       "matches": [
         "*://*.douyu.com/*"
       ],
+      "exclude_matches": [
+        "*://yuba.douyu.com/*"
+      ],
       "css": [
         "css/content.css","css/global.css"
       ],
