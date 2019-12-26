@@ -56,14 +56,14 @@ if (process.env.NODE_ENV === 'production') {
   )
 }
 
-plugins.push(
-  CopyWebpackPlugin([
-  {
-    from: path.resolve(__dirname, 'src/content/quote/'), 
-    to: 'js/quote/'
-  }
-])
-)
+// plugins.push(
+//   CopyWebpackPlugin([
+//   {
+//     from: path.resolve(__dirname, 'src/content/quote/'), 
+//     to: 'js/quote/'
+//   }
+// ])
+// )
 
 module.exports = {
   lintOnSave: false,

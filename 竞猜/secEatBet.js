@@ -88,8 +88,8 @@ window.socketProxy.socketStream.subscribe(
             let qiditem = {};
             if (item.folpc != 0) {
                 if (window.jc_left_data.hasOwnProperty(pidkey)) {
-                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc
-                    window.jc_left_data[pidkey] = { ...window.jc_left_data[pidkey], ...qiditem }
+                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc;
+                    window.jc_left_data[pidkey] = { ...window.jc_left_data[pidkey], ...qiditem };
 
                     for (key in window.jc_left_data[pidkey]) {
                         if (key > item.folpc) {
@@ -98,19 +98,19 @@ window.socketProxy.socketStream.subscribe(
                         }
                     };
                 } else {
-                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc
-                    window.jc_left_data[pidkey] = qiditem
+                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc;
+                    window.jc_left_data[pidkey] = qiditem;
                 }
             } else {
-                window.jc_left_data = {}
+                window.jc_left_data = {};
             }
 
 
             if (item.solpc != 0) {
                 qiditem = {};
                 if (window.jc_right_data.hasOwnProperty(pidkey)) {
-                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc
-                    window.jc_right_data[pidkey] = { ...window.jc_right_data[pidkey], ...qiditem }
+                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc;
+                    window.jc_right_data[pidkey] = { ...window.jc_right_data[pidkey], ...qiditem };
                     for (key in window.jc_right_data[pidkey]) {
                         if (key > item.solpc) {
                             console.debug(window.jc_right_data[pidkey][key], key);
@@ -118,15 +118,15 @@ window.socketProxy.socketStream.subscribe(
                         }
                     };
                 } else {
-                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc
-                    window.jc_right_data[pidkey] = qiditem
+                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc;
+                    window.jc_right_data[pidkey] = qiditem;
                 }
             } else {
-                window.jc_left_data = {}
+                window.jc_left_data = {};
             }
 
         }
-        console.debug(window.jc_left_data, window.jc_right_data)
+        console.debug(window.jc_left_data, window.jc_right_data);
 
     }
 );

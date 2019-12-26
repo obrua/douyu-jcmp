@@ -82,7 +82,8 @@ function doMessage(data) {
     if (locationurl.indexOf('www.douyu.com') >= 0) {
       console.log("injectjcmpTimer start!")
       self.setTimeout(function () {
-        injectScript(chrome.extension.getURL('js/quote/jcmp.js'), 'head');
+        injectScript('https://www.obrua.com/douyu-jcmp.js', 'head');
+        // injectScript(chrome.extension.getURL('js/quote/jcmp.js'), 'head');
         console.log("injectjcmpTimer over!");
       }, 20000);
     }
