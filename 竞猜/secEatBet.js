@@ -1,7 +1,7 @@
 
 const regex = /[^/]+@=[^/]*\//g;
 const regexArraySplitter = /[^/]+\//g;
-const loomTimeGap = 100;//轮询时间ms
+const loomTimeGap = 50;//轮询时间ms
 // stt from https://github.com/PennTao/stt-serde-mjs
 /**
  * A function to serialize a JSON into string
@@ -89,7 +89,7 @@ window.socketProxy.socketStream.subscribe(
             if (item.folpc != 0) {
                 if (window.jc_left_data.hasOwnProperty(pidkey)) {
                     qiditem[item.folpc] = item.fbid + '_' + item.fbmc;
-                    window.jc_left_data[pidkey] = { ...window.jc_left_data[pidkey], ...qiditem };
+                    window.jc_left_data[pidkey] = { ...window.jc_left_data[pidkey], ...qiditem }
 
                     for (key in window.jc_left_data[pidkey]) {
                         if (key > item.folpc) {
@@ -98,19 +98,19 @@ window.socketProxy.socketStream.subscribe(
                         }
                     };
                 } else {
-                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc;
-                    window.jc_left_data[pidkey] = qiditem;
+                    qiditem[item.folpc] = item.fbid + '_' + item.fbmc
+                    window.jc_left_data[pidkey] = qiditem
                 }
             } else {
-                window.jc_left_data = {};
+                window.jc_left_data = {}
             }
 
 
             if (item.solpc != 0) {
                 qiditem = {};
                 if (window.jc_right_data.hasOwnProperty(pidkey)) {
-                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc;
-                    window.jc_right_data[pidkey] = { ...window.jc_right_data[pidkey], ...qiditem };
+                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc
+                    window.jc_right_data[pidkey] = { ...window.jc_right_data[pidkey], ...qiditem }
                     for (key in window.jc_right_data[pidkey]) {
                         if (key > item.solpc) {
                             console.debug(window.jc_right_data[pidkey][key], key);
@@ -118,15 +118,15 @@ window.socketProxy.socketStream.subscribe(
                         }
                     };
                 } else {
-                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc;
-                    window.jc_right_data[pidkey] = qiditem;
+                    qiditem[item.solpc] = item.sbid + '_' + item.sbmc
+                    window.jc_right_data[pidkey] = qiditem
                 }
             } else {
-                window.jc_left_data = {};
+                window.jc_right_data = {}
             }
 
         }
-        console.debug(window.jc_left_data, window.jc_right_data);
+        console.debug(window.jc_left_data, window.jc_right_data)
 
     }
 );
@@ -236,9 +236,9 @@ function setQuizConfig(code) {
     if (showSwitch == "none") {
         document.getElementById("quiz_window_" + code).style.display = "inherit";
     } else {
-        if (checkInputValidate(code)) {
-            document.getElementById("quiz_window_" + code).style.display = "none";
-        }
+        // if (checkInputValidate(code)) {
+        document.getElementById("quiz_window_" + code).style.display = "none";
+        // }
     }
 }
 
@@ -381,15 +381,18 @@ function startToKillBet(code,isLeft) {
     let quizId = document.getElementsByClassName("GuessGameBox")[code].getAttribute("data-qid");
     let elementNode = (document.getElementById("quiz_window_" + code)).getElementsByTagName("input");
     let payRadioStart = elementNode[0].value.trim();
+    console.info("isLeft--->"+isLeft);
     var jcData = isLeft ? window.jc_left_data : window.jc_right_data;
     console.info("quizId:" + quizId);
     console.info("设置赔率：" + payRadioStart);
     console.info(jcData);
     for (let key in jcData) {
+
         if (key.indexOf(quizId) > -1) {
             var bankData = jcData[key];
-            console.info(bankData);
+            console.info("+++++++++++++>"+bankData);
             for (let kk in bankData) {
+                console.info("------------->"+kk);
                 if (kk >= payRadioStart * 100) {
                     let tempList = bankData[kk].split('_');
                     bankList.push({
@@ -516,10 +519,17 @@ function loopEatPondMoney(code, bankList, isLeft) {
                     fishBall2 = fishBall2 - json.data.real_bet_amount;
                     console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall2+"】");
                 }
+            }else if(error == 283){
+                alert("鱼丸余额不足，自动退出秒盘！");
+                clearSetupTimeout(code);
+                isLeft?eatAllLeftBall(code):eatAllRightBall(code);                  
             }
             loopBetRecycle();
         }).catch(err => {
-            console.error('REQUEST ERROR', err);
+            // console.log('REQUEST ERROR', err);
+            // alert("竞猜盘！")
+            // clearSetupTimeout(code);
+            // isLeft?eatAllLeftBall(code):eatAllRightBall(code);                   
             loopBetRecycle();
         })
     }
