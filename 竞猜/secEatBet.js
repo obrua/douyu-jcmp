@@ -195,7 +195,9 @@ function getGuessGameBox() {
     for (let i = 0; i < mainBox.length; i++) {
         let divTag = document.createElement("div");
         divTag.setAttribute('style', 'margin-top:-3px;');
-        divTag.innerHTML = "<div style='width:130px;height:20px;background-color:#FF866B; border-radius:4px; display:inline-block;' id='eat_left_" + i + "'>等待秒盘</div>";
+        divTag.innerHTML = '<div style="width:130px;height:20px;margin-right:37px;background-color:#EE9A49; border-radius:4px; display:inline-block;" id="show_left_'+i+'">资金池:0</div>';
+        divTag.innerHTML += '<div style="width:130px;height:20px;margin-left:37px;background-color:#63B8FF; border-radius:4px; display:inline-block;" id=show_right_'+i+'">资金池:0</div><br/>';
+        divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#FF866B; border-radius:4px; display:inline-block;' id='eat_left_" + i + "'>等待秒盘</div>";
         divTag.innerHTML += "<div style='margin:0 7px;width:60px;height:20px;background-color:orange; border-radius:4px; display:inline-block;' id='setup_quiz_" + i + "'>秒盘设置</div>";
         divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#6888FF; border-radius:4px; display:inline-block;' id='eat_right_" + i + "'>等待秒盘</div>";
         mainBox[i].append(divTag);
@@ -228,7 +230,21 @@ function getGuessGameBox() {
         });
     }
 }
-
+// renew wealth pond data(param ins:quizId:竞猜id,isLeft:左右标志,pondMoney:资金池)
+function renewMoneyPond(quizId,isLeft,pondMoney){
+    let quizObj = document.getElementsByClassName("GuessGameBox");
+    if(quizObj.length>0){
+        for(let i=0;i<quizObj.length;i++){
+            if(quizObj[i].getAttribute("data-qid") == quizId){
+                if(isLeft){
+                    document.getElementById("show_left_"+i).innerText="资金池:"+pondMoney;
+                }else{
+                    document.getElementById("show_right_"+i).innerText="资金池:"+pondMoney;
+                }
+            }
+        }
+    }
+}
 // show or hide radio setup
 function setQuizConfig(code) {
     // console.info(code);
