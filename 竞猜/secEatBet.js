@@ -393,6 +393,11 @@ function clearSetupTimeout(code) {
 }
 // start kill bet 
 function startToKillBet(code,isLeft) {
+    let quizObj = document.getElementsByClassName("GuessGameBox")[code].innerHTML;
+    if(quizObj.indexOf("已封盘")>-1 || quizObj.indexOf("GuessContItem-failIcon")>-1|| quizObj.indexOf("flowIcon")>-1){//封盘，提前结束，流局
+        alert("当前竞猜已经失活，秒盘结束！");
+        clearSetupTimeout(code);
+    }
     var bankList = [];
     let quizId = document.getElementsByClassName("GuessGameBox")[code].getAttribute("data-qid");
     let elementNode = (document.getElementById("quiz_window_" + code)).getElementsByTagName("input");
