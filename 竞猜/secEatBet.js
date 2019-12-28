@@ -505,21 +505,53 @@ function loopEatPondMoney(code, bankList, isLeft) {
         }).then(json => {
             console.info(json);
             if (json.error == 0) {
+                // chen：这里应该用json.data.balance判断，如果设置的鱼丸数量大于json.data.balance（账户剩余数量），剩余数量应该用json.data.balance
                 if(code===0){
                     fishBall0 = fishBall0 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall0+"】");
+                    if (fishBall0 > json.data.balance) {
+                        fishBall0 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall0+"】");
                 }else if(code===1){
                     fishBall1 = fishBall1 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall1+"】");
+                    if (fishBall1 > json.data.balance) {
+                        fishBall1 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall1+"】");
                 }else if(code ===2){
                     fishBall2 = fishBall2 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall2+"】");
+                    if (fishBall2 > json.data.balance) {
+                        fishBall2 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall2+"】");
                 }
                 loopBetRecycle();
             }else if(json.error == 283){
-                alert("鱼丸余额不足，自动退出秒盘！");
-                clearSetupTimeout(code);
-                isLeft?eatAllLeftBall(code):eatAllRightBall(code);                  
+                if (json.data.balance==0){
+                    alert("鱼丸余额为0，自动退出秒盘！");
+                    clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);
+                } else {
+                    console.log("鱼丸余额不足，剩余："+ json.data.balance);
+                    if(code===0){
+                        fishBall0 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall0+"】");
+                    }else if(code===1){
+                        fishBall1 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall1+"】");
+                    }else if(code ===2){
+                        fishBall2 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall2+"】");
+                    }
+                    loopBetRecycle();
+                    // chen：这里应该写 下一个循环，并且下注数量用json.data.balance（账号剩余鱼丸数）
+                }
+            }else if(json.error == 514010){
+                console.log("当前赔率已压完，继续秒盘！");
+                loopBetRecycle();
+            }else {
+                console.log("其他错误，继续秒盘！");
+                loopBetRecycle();
             }
         }).catch(err => {
             loopBetRecycle();
