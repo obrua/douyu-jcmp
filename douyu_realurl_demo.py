@@ -21,8 +21,8 @@ def getunix():
         print(unixtime)
         return unixtime
 
-if getunix()-1577266802 > 60*60*24*3:
-    print('3天结束...')
+if getunix()-1577526317 > 60*60*24*5:
+    print('5天结束...')
     os.system("pause")
     sys.exit()
 

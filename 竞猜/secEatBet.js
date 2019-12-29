@@ -125,6 +125,13 @@ window.socketProxy.socketStream.subscribe(
                 delete window.jc_right_data[pidkey];
             }
 
+            try {
+                renewMoneyPond(item.qid, true, item.fbmc);
+                renewMoneyPond(item.qid, false, item.sbmc);
+            } catch (error) {
+                //console.debug(error)
+            }
+
         }
         console.debug(window.jc_left_data, window.jc_right_data);
 
@@ -196,7 +203,7 @@ function getGuessGameBox() {
         let divTag = document.createElement("div");
         divTag.setAttribute('style', 'margin-top:-3px;');
         divTag.innerHTML = '<div style="width:130px;height:20px;margin-right:37px;background-color:#EE9A49; border-radius:4px; display:inline-block;" id="show_left_'+i+'">资金池:0</div>';
-        divTag.innerHTML += '<div style="width:130px;height:20px;margin-left:37px;background-color:#63B8FF; border-radius:4px; display:inline-block;" id=show_right_'+i+'">资金池:0</div><br/>';
+        divTag.innerHTML += '<div style="width:130px;height:20px;margin-left:37px;background-color:#63B8FF; border-radius:4px; display:inline-block;" id="show_right_'+i+'">资金池:0</div><br/>';
         divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#FF866B; border-radius:4px; display:inline-block;' id='eat_left_" + i + "'>等待秒盘</div>";
         divTag.innerHTML += "<div style='margin:0 7px;width:60px;height:20px;background-color:orange; border-radius:4px; display:inline-block;' id='setup_quiz_" + i + "'>秒盘设置</div>";
         divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#6888FF; border-radius:4px; display:inline-block;' id='eat_right_" + i + "'>等待秒盘</div>";
@@ -237,8 +244,10 @@ function renewMoneyPond(quizId,isLeft,pondMoney){
         for(let i=0;i<quizObj.length;i++){
             if(quizObj[i].getAttribute("data-qid") == quizId){
                 if(isLeft){
+                    //console.log('renewMoneyPond',isLeft,i,pondMoney);
                     document.getElementById("show_left_"+i).innerText="资金池:"+pondMoney;
                 }else{
+                    //console.log('renewMoneyPond',isLeft,i,pondMoney);
                     document.getElementById("show_right_"+i).innerText="资金池:"+pondMoney;
                 }
             }
