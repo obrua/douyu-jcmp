@@ -590,6 +590,7 @@ function loopEatPondMoney(code, bankList, isLeft) {
 }
 //绑定竞猜按钮的事件，加载专题直播间竞猜的弹窗
 function topicRoomLoadGuessUI() {
+    clearTimeout(loopLoadUI);//防止重复执行UI
     let isLoad = document.getElementById("quiz_window_0");
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
     if (isLoad == undefined && checkLoad != undefined) {
@@ -597,8 +598,10 @@ function topicRoomLoadGuessUI() {
     } else if (isLoad == undefined && checkLoad == undefined) {
         setTimeout(topicRoomLoadGuessUI, 300);
     }
+    loopLoadUI = setTimeout(checkUILoad, 6000);
 }
 //延迟加载并循环检测页面否有/打开竞猜栏（有则加载，无则检测）
+var loopLoadUI;
 function checkUILoad() {
     // 专题直播间    
     let topicRoom = document.getElementsByClassName("GuessIcon")[0];
@@ -606,12 +609,11 @@ function checkUILoad() {
     if (topicRoom != undefined && isLoad == undefined) {
         topicRoom.addEventListener("mouseup", topicRoomLoadGuessUI);//专题直播间绑定按钮
     }
-    //普通直播间 
+    // 普通直播间 (ps:普通直播间开半全屏等价于专题直播间的竞猜页面)
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
     if (checkLoad != undefined && isLoad == undefined) {
         getGuessGameBox();
-    } else {
-        setTimeout(checkUILoad, 10000);
     }
+    loopLoadUI = setTimeout(checkUILoad, 6000);//轮询执行UI检测，应对用户切换竞猜页面模式
 }
 checkUILoad();
