@@ -433,7 +433,7 @@ function startToKillBet(code,isLeft) {
     console.info(bankList);
     loopEatPondMoney(code, bankList, isLeft);
 }
-//循环加注一次秒盘
+// loop to add one eat all wealth pond
 function loopEatPondMoney(code, bankList, isLeft) {
     // if (bankList.length == 0) {
     //     console.log("秒盘循环检测中……");
@@ -520,7 +520,7 @@ function loopEatPondMoney(code, bankList, isLeft) {
             }
         }
     }
-    //send net request of bet 
+    // send net request of bet 
     function betQuizRequest(code, payBall, quizId, bankId) {
         let postData = "ctn=" + getEffectCookie("acf_ccn") + "&room_id=" + getRoomId() + "&quiz_id=" + quizId + "&bet_amount=" + payBall + "&money_type=1&banker_id=" + bankId;
         // let postData = "ctn=2c62895477257c0168cdeb875ba356dc&room_id=6256301&quiz_id=3972015&bet_amount=11111&money_type=1&banker_id=92532200";
@@ -588,9 +588,42 @@ function loopEatPondMoney(code, bankList, isLeft) {
         })
     }
 }
-//绑定竞猜按钮的事件，加载专题直播间竞猜的弹窗
+// change window scale
+function transformWindowScale(){
+    let smallWindowBtn = document.getElementsByClassName("wfs-2a8e83")[0];
+    let bigWindowBtn = document.getElementsByClassName("wfs-exit-180268")[0];
+    // let smallWindowObject = document.getElementsByClassName("wfs-2a8e83 removed-9d4c42")[0];
+    // let bigWindowObject = document.getElementsByClassName("wfs-exit-180268 removed-9d4c42")[0];
+    if(smallWindowBtn!=undefined){
+        smallWindowBtn.addEventListener('mouseup',windowScaleEventListener);
+        bigWindowBtn.addEventListener('mouseup',windowScaleEventListener);        
+    }else{
+        setTimeout(transformWindowScale,1000);
+    }
+} 
+// listenning changing of windowScale
+function windowScaleEventListener(){
+    setTimeout(function(){
+        var windowScaleObj = document.getElementsByClassName("wfs-exit-180268 removed-9d4c42")[0];//small window
+        if(windowScaleObj!=undefined){
+            // console.log(1);
+            let isLoad = document.getElementById("quiz_window_0");
+            let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
+            if (checkLoad != undefined && isLoad == undefined) {
+                getGuessGameBox();
+            }  
+        }else{
+            // console.log(2);
+            let topicRoom = document.getElementsByClassName("GuessIcon")[0];
+            let isLoad = document.getElementById("quiz_window_0");
+            if (topicRoom != undefined && isLoad == undefined) {
+                topicRoom.addEventListener("mouseup", topicRoomLoadGuessUI);//专题直播间绑定按钮
+            }            
+        }
+    },600);        
+}
+//bind btn event，load quiz windows of topic room
 function topicRoomLoadGuessUI() {
-    clearTimeout(loopLoadUI);//防止重复执行UI
     let isLoad = document.getElementById("quiz_window_0");
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
     if (isLoad == undefined && checkLoad != undefined) {
@@ -598,22 +631,27 @@ function topicRoomLoadGuessUI() {
     } else if (isLoad == undefined && checkLoad == undefined) {
         setTimeout(topicRoomLoadGuessUI, 300);
     }
-    loopLoadUI = setTimeout(checkUILoad, 6000);
 }
 //延迟加载并循环检测页面否有/打开竞猜栏（有则加载，无则检测）
-var loopLoadUI;
 function checkUILoad() {
+    transformWindowScale();
     // 专题直播间    
     let topicRoom = document.getElementsByClassName("GuessIcon")[0];
     let isLoad = document.getElementById("quiz_window_0");
-    if (topicRoom != undefined && isLoad == undefined) {
+    if (topicRoom != undefined && isLoad == undefined && topicRoom.onmouseup==undefined) {
         topicRoom.addEventListener("mouseup", topicRoomLoadGuessUI);//专题直播间绑定按钮
+        if(document.URL.indexOf("topic")>-1){
+            return ;
+        }
     }
     // 普通直播间 (ps:普通直播间开半全屏等价于专题直播间的竞猜页面)
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
     if (checkLoad != undefined && isLoad == undefined) {
         getGuessGameBox();
+        return ;
+    }else{
+       setTimeout(checkUILoad, 3000);//轮询执行UI检测，应对用户切换竞猜页面模式
     }
-    loopLoadUI = setTimeout(checkUILoad, 6000);//轮询执行UI检测，应对用户切换竞猜页面模式
+    transformWindowScale();
 }
 checkUILoad();
