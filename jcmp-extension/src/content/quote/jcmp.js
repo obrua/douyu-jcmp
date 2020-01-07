@@ -1,7 +1,7 @@
 
 const regex = /[^/]+@=[^/]*\//g;
 const regexArraySplitter = /[^/]+\//g;
-const loomTimeGap = 100;//轮询时间ms
+const loomTimeGap = 50;//轮询时间ms
 // stt from https://github.com/PennTao/stt-serde-mjs
 /**
  * A function to serialize a JSON into string
@@ -102,7 +102,7 @@ window.socketProxy.socketStream.subscribe(
                     window.jc_left_data[pidkey] = qiditem;
                 }
             } else {
-                window.jc_left_data = {};
+                delete window.jc_left_data[pidkey];
             }
 
 
@@ -122,7 +122,14 @@ window.socketProxy.socketStream.subscribe(
                     window.jc_right_data[pidkey] = qiditem;
                 }
             } else {
-                window.jc_left_data = {};
+                delete window.jc_right_data[pidkey];
+            }
+
+            try {
+                renewMoneyPond(item.qid, true, item.fbmc);
+                renewMoneyPond(item.qid, false, item.sbmc);
+            } catch (error) {
+                //console.debug(error)
             }
 
         }
@@ -195,7 +202,9 @@ function getGuessGameBox() {
     for (let i = 0; i < mainBox.length; i++) {
         let divTag = document.createElement("div");
         divTag.setAttribute('style', 'margin-top:-3px;');
-        divTag.innerHTML = "<div style='width:130px;height:20px;background-color:#FF866B; border-radius:4px; display:inline-block;' id='eat_left_" + i + "'>等待秒盘</div>";
+        divTag.innerHTML = '<div style="width:130px;height:20px;margin-right:37px;background-color:#EE9A49; border-radius:4px; display:inline-block;" id="show_left_'+i+'">资金池:0</div>';
+        divTag.innerHTML += '<div style="width:130px;height:20px;margin-left:37px;background-color:#63B8FF; border-radius:4px; display:inline-block;" id="show_right_'+i+'">资金池:0</div><br/>';
+        divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#FF866B; border-radius:4px; display:inline-block;' id='eat_left_" + i + "'>等待秒盘</div>";
         divTag.innerHTML += "<div style='margin:0 7px;width:60px;height:20px;background-color:orange; border-radius:4px; display:inline-block;' id='setup_quiz_" + i + "'>秒盘设置</div>";
         divTag.innerHTML += "<div style='width:130px;height:20px;background-color:#6888FF; border-radius:4px; display:inline-block;' id='eat_right_" + i + "'>等待秒盘</div>";
         mainBox[i].append(divTag);
@@ -228,7 +237,23 @@ function getGuessGameBox() {
         });
     }
 }
-
+// renew wealth pond data(param ins:quizId:竞猜id,isLeft:左右标志,pondMoney:资金池)
+function renewMoneyPond(quizId,isLeft,pondMoney){
+    let quizObj = document.getElementsByClassName("GuessGameBox");
+    if(quizObj.length>0){
+        for(let i=0;i<quizObj.length;i++){
+            if(quizObj[i].getAttribute("data-qid") == quizId){
+                if(isLeft){
+                    //console.log('renewMoneyPond',isLeft,i,pondMoney);
+                    document.getElementById("show_left_"+i).innerText="资金池:"+pondMoney;
+                }else{
+                    //console.log('renewMoneyPond',isLeft,i,pondMoney);
+                    document.getElementById("show_right_"+i).innerText="资金池:"+pondMoney;
+                }
+            }
+        }
+    }
+}
 // show or hide radio setup
 function setQuizConfig(code) {
     // console.info(code);
@@ -236,9 +261,9 @@ function setQuizConfig(code) {
     if (showSwitch == "none") {
         document.getElementById("quiz_window_" + code).style.display = "inherit";
     } else {
-        if (checkInputValidate(code)) {
-            document.getElementById("quiz_window_" + code).style.display = "none";
-        }
+        // if (checkInputValidate(code)) {
+        document.getElementById("quiz_window_" + code).style.display = "none";
+        // }
     }
 }
 
@@ -377,6 +402,11 @@ function clearSetupTimeout(code) {
 }
 // start kill bet 
 function startToKillBet(code,isLeft) {
+    let quizObj = document.getElementsByClassName("GuessGameBox")[code].innerHTML;
+    if(quizObj.indexOf("已封盘")>-1 || quizObj.indexOf("GuessContItem-failIcon")>-1|| quizObj.indexOf("flowIcon")>-1){//封盘，提前结束，流局
+        alert("当前竞猜已经失活，秒盘结束！");
+        clearSetupTimeout(code);
+    }
     var bankList = [];
     let quizId = document.getElementsByClassName("GuessGameBox")[code].getAttribute("data-qid");
     let elementNode = (document.getElementById("quiz_window_" + code)).getElementsByTagName("input");
@@ -388,7 +418,6 @@ function startToKillBet(code,isLeft) {
     for (let key in jcData) {
         if (key.indexOf(quizId) > -1) {
             var bankData = jcData[key];
-            console.info(bankData);
             for (let kk in bankData) {
                 if (kk >= payRadioStart * 100) {
                     let tempList = bankData[kk].split('_');
@@ -404,7 +433,7 @@ function startToKillBet(code,isLeft) {
     console.info(bankList);
     loopEatPondMoney(code, bankList, isLeft);
 }
-//循环加注一次秒盘
+// loop to add one eat all wealth pond
 function loopEatPondMoney(code, bankList, isLeft) {
     // if (bankList.length == 0) {
     //     console.log("秒盘循环检测中……");
@@ -491,7 +520,7 @@ function loopEatPondMoney(code, bankList, isLeft) {
             }
         }
     }
-    //send net request of bet 
+    // send net request of bet 
     function betQuizRequest(code, payBall, quizId, bankId) {
         let postData = "ctn=" + getEffectCookie("acf_ccn") + "&room_id=" + getRoomId() + "&quiz_id=" + quizId + "&bet_amount=" + payBall + "&money_type=1&banker_id=" + bankId;
         // let postData = "ctn=2c62895477257c0168cdeb875ba356dc&room_id=6256301&quiz_id=3972015&bet_amount=11111&money_type=1&banker_id=92532200";
@@ -506,25 +535,94 @@ function loopEatPondMoney(code, bankList, isLeft) {
         }).then(json => {
             console.info(json);
             if (json.error == 0) {
+                // chen：这里应该用json.data.balance判断，如果设置的鱼丸数量大于json.data.balance（账户剩余数量），剩余数量应该用json.data.balance
                 if(code===0){
                     fishBall0 = fishBall0 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall0+"】");
+                    if (fishBall0 > json.data.balance) {
+                        fishBall0 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall0+"】");
                 }else if(code===1){
                     fishBall1 = fishBall1 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall1+"】");
+                    if (fishBall1 > json.data.balance) {
+                        fishBall1 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall1+"】");
                 }else if(code ===2){
                     fishBall2 = fishBall2 - json.data.real_bet_amount;
-                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,秒盘鱼丸数【"+json.data.real_bet_amount+"】,剩余鱼丸数【"+fishBall2+"】");
+                    if (fishBall2 > json.data.balance) {
+                        fishBall2 = json.data.balance;
+                    }
+                    console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall2+"】");
                 }
+                loopBetRecycle();
+            }else if(json.error == 283){
+                if (json.data.balance==0){
+                    alert("鱼丸余额为0，自动退出秒盘！");
+                    clearSetupTimeout(code);
+                    isLeft?eatAllLeftBall(code):eatAllRightBall(code);
+                } else {
+                    console.log("鱼丸余额不足，剩余："+ json.data.balance);
+                    if(code===0){
+                        fishBall0 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall0+"】");
+                    }else if(code===1){
+                        fishBall1 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall1+"】");
+                    }else if(code ===2){
+                        fishBall2 = json.data.balance;
+                        console.info("赔率为【"+json.data.loss_per_cent/100+"】,已下鱼丸数【"+json.data.real_bet_amount+"】,剩余待下鱼丸数【"+fishBall2+"】");
+                    }
+                    loopBetRecycle();
+                    // chen：这里应该写 下一个循环，并且下注数量用json.data.balance（账号剩余鱼丸数）
+                }
+            }else if(json.error == 514010){
+                console.log("当前赔率已压完，继续秒盘！");
+                loopBetRecycle();
+            }else {
+                console.log("其他错误，继续秒盘！");
+                loopBetRecycle();
             }
-            loopBetRecycle();
         }).catch(err => {
-            console.error('REQUEST ERROR', err);
             loopBetRecycle();
         })
     }
 }
-//绑定竞猜按钮的事件，加载专题直播间竞猜的弹窗
+// change window scale
+function transformWindowScale(){
+    let smallWindowBtn = document.getElementsByClassName("wfs-2a8e83")[0];
+    let bigWindowBtn = document.getElementsByClassName("wfs-exit-180268")[0];
+    // let smallWindowObject = document.getElementsByClassName("wfs-2a8e83 removed-9d4c42")[0];
+    // let bigWindowObject = document.getElementsByClassName("wfs-exit-180268 removed-9d4c42")[0];
+    if(smallWindowBtn!=undefined){
+        smallWindowBtn.addEventListener('mouseup',windowScaleEventListener);
+        bigWindowBtn.addEventListener('mouseup',windowScaleEventListener);        
+    }else{
+        setTimeout(transformWindowScale,1000);
+    }
+} 
+// listenning changing of windowScale
+function windowScaleEventListener(){
+    setTimeout(function(){
+        var windowScaleObj = document.getElementsByClassName("wfs-exit-180268 removed-9d4c42")[0];//small window
+        if(windowScaleObj!=undefined){
+            // console.log(1);
+            let isLoad = document.getElementById("quiz_window_0");
+            let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
+            if (checkLoad != undefined && isLoad == undefined) {
+                getGuessGameBox();
+            }  
+        }else{
+            // console.log(2);
+            let topicRoom = document.getElementsByClassName("GuessIcon")[0];
+            let isLoad = document.getElementById("quiz_window_0");
+            if (topicRoom != undefined && isLoad == undefined) {
+                topicRoom.addEventListener("mouseup", topicRoomLoadGuessUI);//专题直播间绑定按钮
+            }            
+        }
+    },600);        
+}
+//bind btn event，load quiz windows of topic room
 function topicRoomLoadGuessUI() {
     let isLoad = document.getElementById("quiz_window_0");
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
@@ -536,18 +634,24 @@ function topicRoomLoadGuessUI() {
 }
 //延迟加载并循环检测页面否有/打开竞猜栏（有则加载，无则检测）
 function checkUILoad() {
+    transformWindowScale();
     // 专题直播间    
     let topicRoom = document.getElementsByClassName("GuessIcon")[0];
     let isLoad = document.getElementById("quiz_window_0");
-    if (topicRoom != undefined && isLoad == undefined) {
+    if (topicRoom != undefined && isLoad == undefined && topicRoom.onmouseup==undefined) {
         topicRoom.addEventListener("mouseup", topicRoomLoadGuessUI);//专题直播间绑定按钮
+        if(document.URL.indexOf("topic")>-1){
+            return ;
+        }
     }
-    //普通直播间 
+    // 普通直播间 (ps:普通直播间开半全屏等价于专题直播间的竞猜页面)
     let checkLoad = document.getElementsByClassName("GuessGameBox")[0];
     if (checkLoad != undefined && isLoad == undefined) {
         getGuessGameBox();
-    } else {
-        setTimeout(checkUILoad, 10000);
+        return ;
+    }else{
+       setTimeout(checkUILoad, 3000);//轮询执行UI检测，应对用户切换竞猜页面模式
     }
+    transformWindowScale();
 }
 checkUILoad();

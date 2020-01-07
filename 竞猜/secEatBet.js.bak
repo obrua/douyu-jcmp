@@ -1,3 +1,21 @@
+window.socketProxy.socketStream.subscribe('tsboxb', function(data) {
+    console.log('tsboxb',data);
+
+});
+
+window.socketProxy.socketStream.subscribe('tslist', function(data) {
+    console.log('tslist',data);
+});
+
+
+fetch('https://www.douyu.com/member/task/redPacketReceive', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' , 'accept': 'application/json, text/plain, */*' , 'x-requested-with': 'XMLHttpRequest'},
+    body: "room_id="+window.socketProxy.info.room.roomId+"&package_room_id="+window.socketProxy.info.room.roomId+"&device_id="+window.socketProxy.info.room.deviceID+"&packerid=35490147&gt_version=v4&version=1"
+})
+.then(function (response) { return response.json() })
+.then(function (data) { console.log(data) })
+
 
 const regex = /[^/]+@=[^/]*\//g;
 const regexArraySplitter = /[^/]+\//g;
